@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <script src="js/showdown.min.js"></script>
+  <script src="js/CETEI.js"></script>
+  <style>
+    div#main {
+      display: grid;
+      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+      grid-template-columns: 33% 33% 33%;
+      grid-template-rows: minmax(10%, 20%) minmax(20%, 30vh) auto;
+      height: 100vh;
+    }
+    #head {
+      grid-column-start: span 3;
+      overflow: scroll;
+    }
+    #TEI {
+      border: thin solid silver;
+    }
+    .code {
+      padding: .5em;
+    }
+    .code>h2 {
+      font-size: small;
+      margin-top: 2px;
+      margin-bottom: 2px;
+    }
+    #CSS {
+      border-top: thin solid silver;
+      border-right: thin solid silver;
+      border-bottom: thin solid silver;
+    }
+    #behaviors {
+      border-top: thin solid silver;
+      border-right: thin solid silver;
+      border-bottom: thin solid silver;
+    }
+    #viewer {
+      grid-column-start: span 3;
+    }
+    .source {
+      position: relative;
+    }
+    .source button {
+      position: absolute;
+      top: 7px;
+      right: 5px;
+    }
+    .source form {
+      margin: 0;
+      padding: 0;
+    }
+    .source textarea {
+      width: 100%;
+      height: 100%;
+      min-height: 25vh;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="main">
+    <div id="head">Tables</div>
+    <div id="TEI" class="code source">
+      <h2>TEI Source</h2>
+      <form>
+        <button>edit</button>
+        <textarea readonly></textarea>
+      </form>
+    </div>
+    <div id="CSS" class="code source">
+      <h2>CSS</h2>
+      <form>
+        <button>edit</button>
+        <textarea readonly></textarea>
+      </form>
+    </div>
+    <div id="behaviors" class="code source">
+      <h2>CETEIcean Behaviors</h2>
+      <form>
+        <button>edit</button>
+        <textarea readonly></textarea>
+      </form>
+    </div>
+    <div id="viewer" class="code">
+      <h2>Preview</h2>
+      <div></div>
+    </div>
+  </div>
+  <script>
+    function parseBehavior(str) {
+      return Function('"use strict";return (' + str + ')')();
+    }
+    function render() {
+      let ct = new CETEI();
+      ct.addBehaviors(parseBehavior(document.querySelector("#behaviors textarea").value));
+      document.getElementById("viewer").appendChild(ct.makeHTML5(document.querySelector("#TEI textarea").value));
+      let viewerStyle = document.createElement("style");
+      viewerStyle.innerText = document.querySelector("#CSS textarea").value;
+      document.getElementById("viewer").appendChild(viewerStyle);
+    }
+  </script>
+  <script>
+    const converter = new showdown.Converter();
+    const example = window.location.hash.substring(1);
+    const doc = fetch(example + "/README.md")
+      .then(response => response.text())
+      .then(md => document.getElementById("head").innerHTML = converter.makeHtml(md));
+    const tei = fetch(example + "/example.tei")
+      .then(response => response.text())
+      .then(tei => {
+        document.querySelector("#TEI textarea").value = tei;
+      });
+    const css = fetch(example + "/example.css")
+      .then(response => response.text())
+      .then(css => {
+        document.querySelector("#CSS textarea").value = css;
+      });
+    const behaviors = fetch(example + "/behaviors.js")
+      .then(response => response.text())
+      .then(behaviors => {
+        document.querySelector("#behaviors textarea").value = behaviors;
+      });
+    const promises = [doc, tei, css, behaviors];
+    Promise.allSettled(promises)
+      .then(result => render());    
+  </script>
+</body>
+</html>

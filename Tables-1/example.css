@@ -1,0 +1,33 @@
+tei-cell {
+  border-right: thin solid black;
+  border-bottom: thin solid black;
+  padding: 2px;
+}
+/* for cell or row with @role = label */
+tei-cell[role=label] {
+  font-weight: bold;
+}
+tei-row {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+}
+tei-row[role=label] {
+  font-weight: bold;
+}
+tei-table {
+  display: grid;
+  grid-auto-flow: row;
+  border-top: thin solid black;
+  border-left: thin solid black;
+  margin-top: 2em;
+  margin-bottom: 2em;
+}
+tei-table > tei-head {
+  border-bottom: thin solid black;
+  border-right: thin solid black;
+  font-size: 120%;
+  font-weight: bold;
+  padding: 2px;
+  text-align: center;
+}
