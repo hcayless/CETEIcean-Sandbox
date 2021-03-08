@@ -8,6 +8,7 @@ tei-cell[role=label] {
   font-weight: bold;
 }
 tei-row {
+  border-left: thin solid black;
   display: grid;
   grid-auto-flow: column;
   grid-auto-columns: 1fr;
@@ -18,14 +19,11 @@ tei-row[role=label] {
 tei-table {
   display: grid;
   grid-auto-flow: row;
-  border-top: thin solid black;
-  border-left: thin solid black;
   margin-top: 2em;
   margin-bottom: 2em;
 }
 tei-table > tei-head {
   border-bottom: thin solid black;
-  border-right: thin solid black;
   font-size: 120%;
   font-weight: bold;
   padding: 2px;

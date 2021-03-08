@@ -1,0 +1,16 @@
+<body xmlns="http://www.tei-c.org/ns/1.0">
+  <div type="chapitre">
+  <head>Les Mille et une Nuits</head>
+  <p>LES chroniques des Sassaniens, anciens rois de Perse, qui avaient étendu leur empire
+    dans les Indes, [...]</p>
+  <div type="histoire">
+    <head>Histoire du Vizir puni</head>
+    <p>IL était autrefois un roi, poursuivit-il, qui avait un<lb/> fils qui aimait
+      passionnément la chasse. Il lui permettait<lb/> de prendre souvent ce divertissement ;
+      [...] </p>
+  </div>
+  </div>
+  <trailer>
+  <hi rend="majuscule">fin du tome premier.</hi>
+  </trailer>
+</body>

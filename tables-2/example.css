@@ -1,0 +1,17 @@
+caption {
+  font-size: 120%;
+  font-weight: bold;
+}
+table {
+  border-collapse: collapse;
+  width: 100%
+}
+table, tr, td {
+  border: thin solid gray;
+}
+td {
+  padding: 2px;
+}
+tr[role=label],td[role=label] {
+  font-weight: bold;
+}

@@ -1,0 +1,7 @@
+tei-hi[rend=majuscule] {
+  text-transform: uppercase;
+}
+tei-trailer {
+  display: block;
+  margin-top: 1em;
+}

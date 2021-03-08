@@ -1,0 +1,33 @@
+<table rows="4" cols="4" xmlns="http://www.tei-c.org/ns/1.0">
+ <head>Poor Men's Lodgings in Norfolk (Mayhew, 1843)</head>
+ <row role="label">
+  <cell role="data"/>
+  <cell role="data">Dossing Cribs or Lodging Houses</cell>
+  <cell role="data">Beds</cell>
+  <cell role="data">Needys or Nightly Lodgers</cell>
+ </row>
+ <row role="data">
+  <cell role="label">Bury St Edmund's</cell>
+  <cell role="data">5</cell>
+  <cell role="data">8</cell>
+  <cell role="data">128</cell>
+ </row>
+ <row role="data">
+  <cell role="label">Thetford</cell>
+  <cell role="data">3</cell>
+  <cell role="data">6</cell>
+  <cell role="data">36</cell>
+ </row>
+ <row role="data">
+  <cell role="label">Attleboro'</cell>
+  <cell role="data">3</cell>
+  <cell role="data">5</cell>
+  <cell role="data">20</cell>
+ </row>
+ <row role="data">
+  <cell role="label">Wymondham</cell>
+  <cell role="data">1</cell>
+  <cell role="data">11</cell>
+  <cell role="data">22</cell>
+ </row>
+</table>
