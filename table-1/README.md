@@ -1,4 +1,4 @@
 # Tables, Method 1
 Tables are tricky. They **mostly** map onto HTML tables quite well, (tei:row = html:tr, tei:cell = html:td) but [table](https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-table.html) can contain a lot of other things that have no HTML analog. Formatting is tricky too. Simple tables can easily be dealt with using CSS Grid, but tables with lots of information in cells, cells that span rows or columns, etc. can be complex enough that only HTML tables can guarantee correct rendering.
 
-This [example](https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-table.html#index-egXML-d53e118259) uses CSS Grid and no behaviors. See [Tables, Method 2](/index.html#table-2) for the same example using behaviors.
+This [example](https://tei-c.org/release/doc/tei-p5-doc/en/html/ref-table.html#index-egXML-d53e118259) uses CSS Grid and no behaviors. See [Tables, Method 2](#table-2) for the same example using behaviors.
