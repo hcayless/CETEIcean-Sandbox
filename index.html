@@ -146,7 +146,7 @@
       window.location = window.location.pathname + "?save=" + id + window.location.hash;
     }
     function showExamples() {
-      fetch("/examples.md")
+      fetch("examples.md")
         .then(response => response.text())
         .then(md => {
           let examples = document.getElementById("examples");
