@@ -100,7 +100,7 @@
     function updateTEI() {
       let tei = document.querySelector("#TEI");
       tei.removeAttribute("style");
-      tei.querySelector("button").removeAttribute("style");
+      Array.from(tei.querySelector("button")).forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
@@ -118,7 +118,7 @@
     function updateCSS() {
       let css = document.querySelector("#CSS");
       css.removeAttribute("style");
-      css.querySelector("button").removeAttribute("style");
+      Array.from(css.querySelector("button")).forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
@@ -136,7 +136,7 @@
     function updateBehaviors() {
       let b = document.querySelector("#behaviors");
       b.removeAttribute("style");
-      b.querySelector("button.update").removeAttribute("style");
+      Array.from(b.querySelector("button")).forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       let id = Date.now().toString();
