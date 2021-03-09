@@ -1,0 +1,2 @@
+# Paragraphs
+A paragraph in TEI is wrapped in `<p>` tags. In general, paragraph formatting only requires CSS. The `<q>` elements in the [example](https://tei-c.org/release/doc/tei-p5-doc/en/html/CO.html#index-egXML-d53e29282) are handled with a Behavior.

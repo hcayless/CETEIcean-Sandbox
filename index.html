@@ -12,77 +12,29 @@
   <script src="js/xml.js"></script>
   <script src="js/css.js"></script>
   <script src="js/javascript.js"></script>
-  <style>
-    div#main {
-      display: grid;
-      font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
-      grid-template-columns: 33% 33% 33%;
-      grid-template-rows: minmax(10%, 20%) minmax(20%, 30vh) auto;
-      height: 100vh;
-    }
-    #head {
-      grid-column-start: span 3;
-      overflow: scroll;
-    }
-    #TEI {
-      border: thin solid silver;
-    }
-    .code {
-      padding: .5em;
-    }
-    .code>h2 {
-      font-size: small;
-      margin-top: 2px;
-      margin-bottom: 2px;
-    }
-    #CSS {
-      border-top: thin solid silver;
-      border-right: thin solid silver;
-      border-bottom: thin solid silver;
-    }
-    #behaviors {
-      border-top: thin solid silver;
-      border-right: thin solid silver;
-      border-bottom: thin solid silver;
-    }
-    #viewer {
-      grid-column-start: span 3;
-    }
-    .source {
-      position: relative;
-    }
-    .source button {
-      position: absolute;
-      top: 7px;
-      right: 5px;
-    }
-    .source form {
-      margin: 0;
-      padding: 0;
-    }
-    .source textarea {
-      width: 100%;
-      height: 100%;
-      min-height: 25vh;
-      white-space: pre;
-    }
-    button.update {
-      display: none;
-    }
-
-  </style>
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
+  <nav>
+    <ul>
+      <li><a href="#examples" onclick="showExamples(); return false;">examples</a></li>
+      <li><a href="index.html">🐳</a></li>
+    </ul>
+  </nav>
   <div id="main">
     <div id="head">
-      <h1>Play with CETEICean</h1>
-      <p>You can look at the examples, or add your own TEI, CSS, and CETEIcean Behaviors 
-        to the three text areas below to see the results at the bottom.</p>
+      <h1>CETEICean 🐳 Sandbox</h1>
+      <p>You can look at the <a href="examples.md" onclick="showExamples(); return false;">examples</a>, 
+        or add your own TEI, CSS, and CETEIcean Behaviors to the three text areas below to see the 
+        results at the bottom.</p>
+      <p>Clicking on a text area opens up an editor which you can use to change the TEI source, the CSS, 
+        or the Behaviors. When you're done editing, you can hit "update" to preview your changes or 
+        "close" to abandon them.</p>
     </div>
     <div id="TEI" class="code source">
       <h2>TEI Source</h2>
       <form>
-        <button class="edit">edit</button>
+        <button class="close">close</button>
         <button class="update">update</button>
         <textarea readonly></textarea>
       </form>
@@ -90,7 +42,7 @@
     <div id="CSS" class="code source">
       <h2>CSS</h2>
       <form>
-        <button class="edit">edit</button>
+        <button class="close">close</button>
         <button class="update">update</button>
         <textarea readonly></textarea>
       </form>
@@ -98,7 +50,7 @@
     <div id="behaviors" class="code source">
       <h2>CETEIcean Behaviors</h2>
       <form>
-        <button class="edit">edit</button>
+        <button class="close">close</button>
         <button class="update">update</button>
         <textarea readonly></textarea>
       </form>
@@ -108,6 +60,7 @@
       <div></div>
     </div>
   </div>
+  <div id="examples"></div>
   <script>
     function parseBehavior(str) {
       return Function('"use strict";return (' + str + ')')();
@@ -116,63 +69,73 @@
       let ct = new CETEI();
       ct.addBehaviors(parseBehavior(document.querySelector("#behaviors textarea").value));
       document.querySelector("#viewer>div").innerHTML = "";
-      document.querySelector("#viewer>div").appendChild(ct.makeHTML5(document.querySelector("#TEI textarea").value));
+      let view = document.createElement("div");
+      view.attachShadow({mode:"open"});
+      let tei = ct.makeHTML5("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">" + document.querySelector("#TEI textarea").value + "</TEI>");
+      for (let node of Array.from(tei.childNodes)) {
+        view.shadowRoot.appendChild(node);
+      }
       let viewerStyle = document.createElement("style");
-      viewerStyle.innerText = document.querySelector("#CSS textarea").value;
-      document.querySelector("#viewer>div").appendChild(viewerStyle);
+      viewerStyle.textContent = document.querySelector("#CSS textarea").value;
+      view.shadowRoot.appendChild(viewerStyle);
+      document.querySelector("#viewer>div").appendChild(view);
+    }
+    function close(event) {
+      event.target.parentElement.parentElement.removeAttribute("style");
+      Array.from(event.target.parentElement.querySelectorAll("button")).forEach(item => item.removeAttribute("style"));
+      let cm = document.querySelector(".CodeMirror");
+      cm.CodeMirror.setValue(event.target.parentElement.querySelector("textarea").value);
+      cm.CodeMirror.toTextArea();
     }
     function editTEI() {
       let tei = document.querySelector("#TEI");
-      tei.setAttribute("style", "background: white; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      tei.querySelector("button.edit").setAttribute("style", "display: none;");
-      tei.querySelector("button.update").setAttribute("style", "display: inline;");
+      tei.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
+      Array.from(tei.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#TEI textarea"), {
         lineNumbers: true,
         mode: "application/xml" 
       });
+      editor.setSize(null, "88vh");
     }
     function updateTEI() {
       let tei = document.querySelector("#TEI");
       tei.removeAttribute("style");
-      tei.querySelector("button.edit").removeAttribute("style");
-      tei.querySelector("button.update").removeAttribute("style");
+      tei.querySelector("button").removeAttribute("style");
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
     }
     function editCSS() {
       let css = document.querySelector("#CSS");
-      css.setAttribute("style", "background: white; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      css.querySelector("button.edit").setAttribute("style", "display: none;");
-      css.querySelector("button.update").setAttribute("style", "display: inline;");
+      css.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
+      Array.from(css.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#CSS textarea"), {
         lineNumbers: true,
         mode: "text/css" 
       });
+      editor.setSize(null, "88vh");
     }
     function updateCSS() {
       let css = document.querySelector("#CSS");
       css.removeAttribute("style");
-      css.querySelector("button.edit").removeAttribute("style");
-      css.querySelector("button.update").removeAttribute("style");
+      css.querySelector("button").removeAttribute("style");
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
     }
     function editBehaviors() {
       let b = document.querySelector("#behaviors");
-      b.setAttribute("style", "background: white; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      b.querySelector("button.edit").setAttribute("style", "display: none;");
-      b.querySelector("button.update").setAttribute("style", "display: inline;");
+      b.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
+      Array.from(b.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#behaviors textarea"), {
         lineNumbers: true,
         mode: "application/javascript" 
       });
+      editor.setSize(null, "88vh");
     }
     function updateBehaviors() {
       let b = document.querySelector("#behaviors");
       b.removeAttribute("style");
-      b.querySelector("button.edit").removeAttribute("style");
       b.querySelector("button.update").removeAttribute("style");
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
@@ -182,54 +145,99 @@
       window.localStorage.setItem(id + "-c", document.querySelector("#CSS textarea").value);
       window.location = window.location.pathname + "?save=" + id + window.location.hash;
     }
+    function showExamples() {
+      fetch("/examples.md")
+        .then(response => response.text())
+        .then(md => {
+          let examples = document.getElementById("examples");
+          examples.innerHTML = converter.makeHtml(md);
+          examples.setAttribute("style", "background: white; border: thin solid black; display: block; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
+        });
+    }
   </script>
   <script>
     const converter = new showdown.Converter();
     const example = window.location.hash.substring(1);
     if (example) {
       const doc = fetch(example + "/README.md")
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            throw new Error("Can't read README.md");
+          } 
+          return response.text();
+        })
         .then(md => document.getElementById("head").innerHTML = converter.makeHtml(md));
       const tei = fetch(example + "/example.tei")
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            document.querySelector("#TEI textarea").value = "";
+            throw new Error("Can't read example.tei");
+          } 
+          return response.text();
+        })
         .then(tei => {
           document.querySelector("#TEI textarea").value = tei;
         });
       const css = fetch(example + "/example.css")
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            document.querySelector("#CSS textarea").value = "";
+            throw new Error("Can't read example.css");
+          } 
+          return response.text();
+        })
         .then(css => {
           document.querySelector("#CSS textarea").value = css;
         });
       const behaviors = fetch(example + "/behaviors.js")
-        .then(response => response.text())
+        .then(response => {
+          if (!response.ok) {
+            document.querySelector("#behaviors textarea").value = "";
+            throw new Error("Can't read behaviors.js");
+          } 
+          return response.text();
+        })
         .then(behaviors => {
           document.querySelector("#behaviors textarea").value = behaviors;
         });
       const promises = [doc, tei, css, behaviors];
       Promise.allSettled(promises)
-        .then(result => {
-          if (window.location.search) {
-            let save = new URLSearchParams(window.location.search).get("save")
-            let b = window.localStorage.getItem(save + "-b");
-            if (b) {
-              document.querySelector("#behaviors textarea").value = b;
-              document.querySelector("#TEI textarea").value = window.localStorage.getItem(save + "-t");
-              document.querySelector("#CSS textarea").value = window.localStorage.getItem(save + "-c");
-              window.localStorage.clear();
+        .then(results => {
+          let success = true;
+          results.forEach(result => {
+            if (result.status == "rejected") {
+              success = false;
+              console.error(result.reason);
             }
+          })
+          if (success) {
+            if (window.location.search) {
+              let save = new URLSearchParams(window.location.search).get("save")
+              let b = window.localStorage.getItem(save + "-b");
+              if (b) {
+                document.querySelector("#behaviors textarea").value = b;
+                document.querySelector("#TEI textarea").value = window.localStorage.getItem(save + "-t");
+                document.querySelector("#CSS textarea").value = window.localStorage.getItem(save + "-c");
+                window.localStorage.clear();
+              }
+            }
+            render();
           }
-          render();
         }); 
     }
     window.onhashchange = function() {
       window.location.reload();
     }
-    document.querySelector("#TEI button.edit").addEventListener("click", editTEI);
+    document.querySelector("#TEI textarea").addEventListener("click", editTEI);
     document.querySelector("#TEI button.update").addEventListener("click", updateTEI);
-    document.querySelector("#CSS button.edit").addEventListener("click", editCSS);
+    document.querySelector("#CSS textarea").addEventListener("click", editCSS);
     document.querySelector("#CSS button.update").addEventListener("click", updateCSS);
-    document.querySelector("#behaviors button.edit").addEventListener("click", editBehaviors);
+    document.querySelector("#behaviors textarea").addEventListener("click", editBehaviors);
     document.querySelector("#behaviors button.update").addEventListener("click", updateBehaviors);
+    for (let button of Array.from(document.querySelectorAll("button.close"))) {
+      button.addEventListener("click", event => close(event));
+    }
+    window.addEventListener("click", event => document.querySelector("div#examples").removeAttribute("style"));
   </script>
 </body>
 </html>

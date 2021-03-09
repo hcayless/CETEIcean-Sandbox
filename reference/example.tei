@@ -1,0 +1,5 @@
+<p>The current version of the TEI Guidelines source code
+ is available in the TEI GitHub Repository; <ref target="https://github.com/TEIC/TEI/blob/dev/P5/Source/guidelines-en.xml"
+  mimeType="application/tei+xml">guidelines-en.xml</ref> 
+ is the root document used to create the English version
+ of these Guidelines.</p>
