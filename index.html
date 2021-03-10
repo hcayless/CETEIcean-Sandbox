@@ -92,6 +92,11 @@
       tei.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
       Array.from(tei.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#TEI textarea"), {
+        extraKeys: {
+          Esc: function(cm) {
+            tei.querySelector("button.close").dispatchEvent(new Event('click'));
+          }
+        },
         lineNumbers: true,
         mode: "application/xml" 
       });
@@ -110,6 +115,11 @@
       css.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
       Array.from(css.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#CSS textarea"), {
+        extraKeys: {
+          Esc: function(cm) {
+            css.querySelector("button.close").dispatchEvent(new Event('click'));
+          }
+        },
         lineNumbers: true,
         mode: "text/css" 
       });
@@ -128,6 +138,11 @@
       b.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
       Array.from(b.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#behaviors textarea"), {
+        extraKeys: {
+          Esc: function(cm) {
+            b.querySelector("button.close").dispatchEvent(new Event('click'));
+          }
+        },
         lineNumbers: true,
         mode: "application/javascript" 
       });
@@ -238,6 +253,7 @@
       button.addEventListener("click", event => close(event));
     }
     window.addEventListener("click", event => document.querySelector("div#examples").removeAttribute("style"));
+
   </script>
 </body>
 </html>
