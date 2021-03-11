@@ -72,7 +72,7 @@
       let view = document.createElement("div");
       view.attachShadow({mode:"open"});
       let tei = ct.makeHTML5("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">" + document.querySelector("#TEI textarea").value + "</TEI>");
-      for (let node of Array.from(tei.childNodes)) {
+      for (let node of tei.childNodes) {
         view.shadowRoot.appendChild(node);
       }
       let viewerStyle = document.createElement("style");
@@ -82,7 +82,7 @@
     }
     function close(event) {
       event.target.parentElement.parentElement.removeAttribute("style");
-      Array.from(event.target.parentElement.querySelectorAll("button")).forEach(item => item.removeAttribute("style"));
+      event.target.parentElement.querySelectorAll("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.setValue(event.target.parentElement.querySelector("textarea").value);
       cm.CodeMirror.toTextArea();
@@ -90,7 +90,7 @@
     function editTEI() {
       let tei = document.querySelector("#TEI");
       tei.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      Array.from(tei.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
+      tei.querySelectorAll("form>button").forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#TEI textarea"), {
         extraKeys: {
           Esc: function(cm) {
@@ -105,7 +105,7 @@
     function updateTEI() {
       let tei = document.querySelector("#TEI");
       tei.removeAttribute("style");
-      Array.from(tei.querySelector("button")).forEach(item => removeAttribute("style"));
+      tei.querySelectorAll("button").forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
@@ -113,7 +113,7 @@
     function editCSS() {
       let css = document.querySelector("#CSS");
       css.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      Array.from(css.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
+      css.querySelectorAll("form>button").forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#CSS textarea"), {
         extraKeys: {
           Esc: function(cm) {
@@ -128,7 +128,7 @@
     function updateCSS() {
       let css = document.querySelector("#CSS");
       css.removeAttribute("style");
-      Array.from(css.querySelector("button")).forEach(item => removeAttribute("style"));
+      css.querySelector("button").forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
@@ -136,7 +136,7 @@
     function editBehaviors() {
       let b = document.querySelector("#behaviors");
       b.setAttribute("style", "background: white; border: thin solid black; position: fixed; top: 5vh; left: 5%; width: 90%; height: 90vh; z-index: 100");
-      Array.from(b.querySelectorAll("form>button")).forEach(item => item.setAttribute("style", "display: inline;"));
+      b.querySelectorAll("form>button").forEach(item => item.setAttribute("style", "display: inline;"));
       let editor = CodeMirror.fromTextArea(document.querySelector("#behaviors textarea"), {
         extraKeys: {
           Esc: function(cm) {
@@ -151,7 +151,7 @@
     function updateBehaviors() {
       let b = document.querySelector("#behaviors");
       b.removeAttribute("style");
-      Array.from(b.querySelector("button")).forEach(item => removeAttribute("style"));
+      b.querySelector("button").forEach(item => removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       let id = Date.now().toString();
@@ -249,7 +249,7 @@
     document.querySelector("#CSS button.update").addEventListener("click", updateCSS);
     document.querySelector("#behaviors textarea").addEventListener("click", editBehaviors);
     document.querySelector("#behaviors button.update").addEventListener("click", updateBehaviors);
-    for (let button of Array.from(document.querySelectorAll("button.close"))) {
+    for (let button of document.querySelectorAll("button.close")) {
       button.addEventListener("click", event => close(event));
     }
     window.addEventListener("click", event => document.querySelector("div#examples").removeAttribute("style"));
