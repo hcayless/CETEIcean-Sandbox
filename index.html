@@ -33,7 +33,7 @@
     </div>
     <div id="TEI" class="code source">
       <h2>TEI Source</h2>
-      <form>
+      <form onsubmit="return false;">
         <button class="close">close</button>
         <button class="update">update</button>
         <textarea readonly></textarea>
@@ -41,7 +41,7 @@
     </div>
     <div id="CSS" class="code source">
       <h2>CSS</h2>
-      <form>
+      <form onsubmit="return false;">
         <button class="close">close</button>
         <button class="update">update</button>
         <textarea readonly></textarea>
@@ -49,10 +49,10 @@
     </div>
     <div id="behaviors" class="code source">
       <h2>CETEIcean Behaviors</h2>
-      <form>
+      <form onsubmit="return false;">
         <button class="close">close</button>
         <button class="update">update</button>
-        <textarea readonly></textarea>
+        <textarea readonly>{}</textarea>
       </form>
     </div>
     <div id="viewer" class="code">
@@ -71,9 +71,16 @@
       document.querySelector("#viewer>div").innerHTML = "";
       let view = document.createElement("div");
       view.attachShadow({mode:"open"});
-      let tei = ct.makeHTML5("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">" + document.querySelector("#TEI textarea").value + "</TEI>");
-      for (let node of tei.childNodes) {
-        view.shadowRoot.appendChild(node);
+      let tei;
+      let source = document.querySelector("#TEI textarea").value;
+      if (source.match(/^\<\?xml/) || source.match(/^\<TEI/)) {
+        tei = ct.makeHTML5(source);
+        view.shadowRoot.appendChild(tei);
+      } else {
+        tei = ct.makeHTML5("<TEI xmlns=\"http://www.tei-c.org/ns/1.0\">" + source + "</TEI>");
+          for (let node of Array.from(tei.childNodes)) {
+          view.shadowRoot.appendChild(node);
+        }
       }
       let viewerStyle = document.createElement("style");
       viewerStyle.textContent = document.querySelector("#CSS textarea").value;
@@ -116,14 +123,18 @@
               throw new Error("Can't read " + source.value);
             } 
             return response.text();
-          }).then(result => {
-            source.value = result;
+          }).then(xml => {
+            source.value = xml;
             render();
-          });
+          })
       } else {
-        render();
+        let id = Date.now().toString();
+        window.sessionStorage.setItem(id + "-t", source.value);
+        window.sessionStorage.setItem(id + "-c", document.querySelector("#CSS textarea").value);
+        window.sessionStorage.setItem(id + "-b", document.querySelector("#behaviors textarea").value);
+        window.location = window.location.pathname + "?save=" + id + window.location.hash;
       }
-
+      return false;
     }
     function editCSS() {
       let css = document.querySelector("#CSS");
@@ -143,10 +154,14 @@
     function updateCSS() {
       let css = document.querySelector("#CSS");
       css.removeAttribute("style");
-      css.querySelector("button").forEach(item => item.removeAttribute("style"));
+      css.querySelectorAll("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
-      render();
+      let view = document.querySelector("#viewer>div>div");
+      view.shadowRoot.removeChild(view.shadowRoot.querySelector("style"));
+      let viewerStyle = document.createElement("style");
+      viewerStyle.textContent = document.querySelector("#CSS textarea").value;
+      view.shadowRoot.appendChild(viewerStyle);
     }
     function editBehaviors() {
       let b = document.querySelector("#behaviors");
@@ -166,13 +181,13 @@
     function updateBehaviors() {
       let b = document.querySelector("#behaviors");
       b.removeAttribute("style");
-      b.querySelector("button").forEach(item => item.removeAttribute("style"));
+      b.querySelectorAll("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       let id = Date.now().toString();
-      window.localStorage.setItem(id + "-b", b.querySelector("textarea").value);
-      window.localStorage.setItem(id + "-t", document.querySelector("#TEI textarea").value);
-      window.localStorage.setItem(id + "-c", document.querySelector("#CSS textarea").value);
+      window.sessionStorage.setItem(id + "-b", b.querySelector("textarea").value);
+      window.sessionStorage.setItem(id + "-t", document.querySelector("#TEI textarea").value);
+      window.sessionStorage.setItem(id + "-c", document.querySelector("#CSS textarea").value);
       window.location = window.location.pathname + "?save=" + id + window.location.hash;
     }
     function showExamples() {
@@ -243,17 +258,28 @@
           if (success) {
             if (window.location.search) {
               let save = new URLSearchParams(window.location.search).get("save")
-              let b = window.localStorage.getItem(save + "-b");
+              let b = window.sessionStorage.getItem(save + "-b");
               if (b) {
                 document.querySelector("#behaviors textarea").value = b;
-                document.querySelector("#TEI textarea").value = window.localStorage.getItem(save + "-t");
-                document.querySelector("#CSS textarea").value = window.localStorage.getItem(save + "-c");
-                window.localStorage.clear();
+                document.querySelector("#TEI textarea").value = window.sessionStorage.getItem(save + "-t");
+                document.querySelector("#CSS textarea").value = window.sessionStorage.getItem(save + "-c");
+                window.sessionStorage.clear();
               }
             }
             render();
           }
         }); 
+    } else {
+      if (window.location.search) {
+        let save = new URLSearchParams(window.location.search).get("save")
+        let b = window.sessionStorage.getItem(save + "-b");
+        if (b) {
+          document.querySelector("#behaviors textarea").value = b;
+          document.querySelector("#TEI textarea").value = window.sessionStorage.getItem(save + "-t");
+          document.querySelector("#CSS textarea").value = window.sessionStorage.getItem(save + "-c");
+        }
+      }
+      render();
     }
     window.onhashchange = function() {
       window.location.reload();
