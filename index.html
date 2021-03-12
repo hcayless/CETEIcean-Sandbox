@@ -105,10 +105,25 @@
     function updateTEI() {
       let tei = document.querySelector("#TEI");
       tei.removeAttribute("style");
-      tei.querySelectorAll("button").forEach(item => removeAttribute("style"));
+      tei.querySelectorAll("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
-      render();
+      let source = tei.querySelector("textarea");
+      if (source.value.match(/^http/)) {
+        fetch(source.value)
+          .then(response => {
+            if (!response.ok) {
+              throw new Error("Can't read " + source.value);
+            } 
+            return response.text();
+          }).then(result => {
+            source.value = result;
+            render();
+          });
+      } else {
+        render();
+      }
+
     }
     function editCSS() {
       let css = document.querySelector("#CSS");
@@ -128,7 +143,7 @@
     function updateCSS() {
       let css = document.querySelector("#CSS");
       css.removeAttribute("style");
-      css.querySelector("button").forEach(item => removeAttribute("style"));
+      css.querySelector("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       render();
@@ -151,7 +166,7 @@
     function updateBehaviors() {
       let b = document.querySelector("#behaviors");
       b.removeAttribute("style");
-      b.querySelector("button").forEach(item => removeAttribute("style"));
+      b.querySelector("button").forEach(item => item.removeAttribute("style"));
       let cm = document.querySelector(".CodeMirror");
       cm.CodeMirror.toTextArea();
       let id = Date.now().toString();
